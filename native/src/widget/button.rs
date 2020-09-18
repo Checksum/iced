@@ -5,8 +5,8 @@
 //! [`Button`]: struct.Button.html
 //! [`State`]: struct.State.html
 use crate::{
-    layout, mouse, Clipboard, Element, Event, Hasher, Layout, Length, Point,
-    Rectangle, Widget,
+    keyboard, layout, mouse, Clipboard, Element, Event, Hasher, Layout, Length,
+    Point, Rectangle, Widget,
 };
 use std::hash::Hash;
 
@@ -139,6 +139,11 @@ impl State {
     pub fn new() -> State {
         State::default()
     }
+
+    /// Creates a new [`State`], representing an focused [`Button`]
+    pub fn pressed() -> Self {
+        Self { is_pressed: true }
+    }
 }
 
 impl<'a, Message, Renderer> Widget<Message, Renderer>
@@ -207,6 +212,20 @@ where
                     }
                 }
             }
+            Event::Keyboard(keyboard::Event::KeyPressed {
+                key_code,
+                modifiers: _,
+            }) => match key_code {
+                keyboard::KeyCode::Enter => {
+                    if self.state.is_pressed {
+                        if let Some(on_press) = self.on_press.clone() {
+                            messages.push(on_press);
+                            self.state.is_pressed = false;
+                        }
+                    }
+                }
+                _ => {}
+            },
             _ => {}
         }
     }
