@@ -49,6 +49,23 @@ impl<T> Default for State<T> {
     }
 }
 
+impl<T> State<T> {
+    /// Creates a new [`State`], representing an open [`PickList`]
+    pub fn open() -> Self {
+        Self {
+            is_open: true,
+            ..State::default()
+        }
+    }
+
+    /// Returns whether the [`PickList`] is currently open or not.
+    ///
+    /// [`PickList`]: struct.PickList.html
+    pub fn is_open(&self) -> bool {
+        self.is_open
+    }
+}
+
 impl<'a, T: 'a, Message, Renderer: self::Renderer>
     PickList<'a, T, Message, Renderer>
 where
