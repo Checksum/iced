@@ -1,6 +1,6 @@
 //! Display a dropdown list of selectable values.
 use crate::{
-    layout, mouse, overlay,
+    keyboard, layout, mouse, overlay,
     overlay::menu::{self, Menu},
     scrollable, text, Clipboard, Element, Event, Hasher, Layout, Length, Point,
     Rectangle, Size, Widget,
@@ -261,6 +261,51 @@ where
                     messages.push((self.on_selected)(last_selection));
 
                     *self.is_open = false;
+                }
+            }
+            Event::Keyboard(keyboard::Event::KeyPressed {
+                key_code,
+                modifiers: _,
+            }) => {
+                if *self.is_open {
+                    match key_code {
+                        keyboard::KeyCode::Down => {
+                            if let Some(index) = *self.hovered_option {
+                                *self.hovered_option =
+                                    if index < self.options.len() - 1 {
+                                        Some(index + 1)
+                                    } else {
+                                        Some(0)
+                                    };
+                            } else {
+                                *self.hovered_option = Some(0);
+                            }
+                        }
+                        keyboard::KeyCode::Up => {
+                            if let Some(index) = *self.hovered_option {
+                                *self.hovered_option =
+                                    if index > 0 {
+                                        Some(index - 1)
+                                    } else {
+                                        Some(self.options.len() - 1)
+                                    };
+                            } else {
+                                *self.hovered_option = Some(0);
+                            }
+                        }
+                        keyboard::KeyCode::Enter => {
+                            if let Some(index) = *self.hovered_option {
+                                if let Some(option) = self.options.get(index) {
+                                    *self.last_selection = Some(option.clone());
+                                }
+                            }
+                            if let Some(last_selection) = self.last_selection.take() {
+                                messages.push((self.on_selected)(last_selection));
+                                *self.is_open = false;
+                            }
+                        }
+                        _ => {}
+                    }
                 }
             }
             _ => {}
