@@ -9,10 +9,6 @@ use crate::{
 use std::u32;
 
 /// A container that distributes its contents horizontally.
-///
-/// A [`Row`] will try to fill the horizontal space of its container.
-///
-/// [`Row`]: struct.Row.html
 #[allow(missing_debug_implementations)]
 pub struct Row<'a, Message, Renderer> {
     spacing: u16,
@@ -200,7 +196,7 @@ where
         self.max_height.hash(state);
         self.align_items.hash(state);
         self.spacing.hash(state);
-        self.spacing.hash(state);
+        self.padding.hash(state);
 
         for child in &self.children {
             child.widget.hash_layout(state);
