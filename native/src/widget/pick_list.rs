@@ -290,7 +290,7 @@ where
                                         Some(self.options.len() - 1)
                                     };
                             } else {
-                                *self.hovered_option = Some(0);
+                                *self.hovered_option = Some(self.options.len() - 1);
                             }
                         }
                         keyboard::KeyCode::Enter => {
