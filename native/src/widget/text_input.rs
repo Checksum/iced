@@ -497,6 +497,7 @@ where
         _defaults: &Renderer::Defaults,
         layout: Layout<'_>,
         cursor_position: Point,
+        _viewport: &Rectangle,
     ) -> Renderer::Output {
         let bounds = layout.bounds();
         let text_bounds = layout.children().next().unwrap().bounds();
@@ -690,6 +691,20 @@ impl State {
     /// [`TextInput`]: struct.TextInput.html
     pub fn cursor(&self) -> Cursor {
         self.cursor
+    }
+
+    /// Focuses the [`TextInput`].
+    ///
+    /// [`TextInput`]: struct.TextInput.html
+    pub fn focus(&mut self) {
+        self.is_focused = true;
+    }
+
+    /// Unfocuses the [`TextInput`].
+    ///
+    /// [`TextInput`]: struct.TextInput.html
+    pub fn unfocus(&mut self) {
+        self.is_focused = false;
     }
 
     /// Moves the [`Cursor`] of the [`TextInput`] to the front of the input text.

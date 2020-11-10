@@ -1,4 +1,6 @@
-use crate::{layout, overlay, Clipboard, Element, Event, Layout, Point, Size};
+use crate::layout;
+use crate::overlay;
+use crate::{Clipboard, Element, Event, Layout, Point, Rectangle, Size};
 
 use std::hash::Hasher;
 
@@ -327,6 +329,8 @@ where
         renderer: &mut Renderer,
         cursor_position: Point,
     ) -> Renderer::Output {
+        let viewport = Rectangle::with_size(self.bounds);
+
         let overlay = if let Some(mut overlay) =
             self.root.overlay(Layout::new(&self.base.layout))
         {
@@ -365,6 +369,7 @@ where
                 &Renderer::Defaults::default(),
                 Layout::new(&self.base.layout),
                 base_cursor,
+                &viewport,
             );
 
             renderer.overlay(
@@ -378,8 +383,26 @@ where
                 &Renderer::Defaults::default(),
                 Layout::new(&self.base.layout),
                 cursor_position,
+                &viewport,
             )
         }
+    }
+
+    /// Relayouts and returns a new  [`UserInterface`] using the provided
+    /// bounds.
+    ///
+    /// [`UserInterface`]: struct.UserInterface.html
+    pub fn relayout(self, bounds: Size, renderer: &mut Renderer) -> Self {
+        Self::build(
+            self.root,
+            bounds,
+            Cache {
+                base: self.base,
+                overlay: self.overlay,
+                bounds: self.bounds,
+            },
+            renderer,
+        )
     }
 
     /// Extract the [`Cache`] of the [`UserInterface`], consuming it in the
